@@ -66,7 +66,7 @@ app.post('/saque',function(req,res){
         valorsaque -= 100
         cont ++ //Contador para ver quanto do valor saque vai ser retirado    
     }
-    lista.push(`Notas de 100 : ${cont}`)
+    lista.push(`Notas de 100 : ${cont}`) 
     cont =0 //zerar o contador para nova contagem 
 
     //Saque das notas de 50
