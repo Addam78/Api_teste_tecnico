@@ -3,6 +3,7 @@ const morgan = require ('morgan')
 const cors = require ('cors')
 const bodyParser = require('body-parser')
 const filmes = require('./src/data/filmes.json') //Constante que recebe o arquivo json eportado
+const { INTEGER, FLOAT } = require('sequelize')
 
 
 const app = express ()
@@ -56,17 +57,25 @@ app.get('/',function(req,res){
 //   });
 app.post('/saque',function(req,res){
 
-    let cont = 0 //Contador
-    let lista=[] //Armazenar as notas
+    let cont = 0 //Contador para verificar quantasvezes o numero foi diminuido e atribuir a lista
+    //por exemplo se tem um valor de 500 e na condicional 100 o contador da um total de 5 ,significa que foram retiradas 5 notas de 100
 
-    let valorsaque = parseInt(req.body.valor) //Valor que o usuario insere saque
+    let lista_notas=[] //Armazenar as notas ((o valor do contador)
+
+    let valorsaque = (req.body.valor) //Valor que o usuario insere saque
+    // Condicional para bloquear valores inteiros e valores do tipo float, aceitar somente valores do tipo inteiro
+
+    if( !Number.isInteger(valorsaque) || valorsaque <=0){
+        res.json('Saque invalido , tente numero inteiros e positivos por favor')
+    }
+  
 
     //Saque das notas de 100
     while (valorsaque >= 100){
         valorsaque -= 100
         cont ++ //Contador para ver quanto do valor saque vai ser retirado    
     }
-    lista.push(`Notas de 100 : ${cont}`) 
+    lista_notas.push(`Notas de 100 : ${cont}`) 
     cont =0 //zerar o contador para nova contagem 
 
     //Saque das notas de 50
@@ -74,7 +83,7 @@ app.post('/saque',function(req,res){
         valorsaque -=50
         cont ++
     }
-    lista.push(`Notas de 50 : ${cont}`)
+    lista_notas.push(`Notas de 50 : ${cont}`)
     cont =0 //zerar o contador para nova contagem
 
     //Saque das notas de 20
@@ -82,7 +91,7 @@ app.post('/saque',function(req,res){
         valorsaque -= 20
         cont ++
     }
-    lista.push(`Notas de 20 : ${cont}`)
+    lista_notas.push(`Notas de 20 : ${cont}`)
     cont =0 //zerar o contador para nova contagem
 
     //Saque das notas de 10
@@ -90,7 +99,7 @@ app.post('/saque',function(req,res){
         valorsaque -= 10
         cont ++
     }
-    lista.push(`Notas de 10  : ${cont}`)
+    lista_notas.push(`Notas de 10  : ${cont}`)
     cont =0 //zerar o contador para nova contagem
 
     //Saque das notas de 5
@@ -98,7 +107,7 @@ app.post('/saque',function(req,res){
         valorsaque -=5
         cont ++
     }
-    lista.push(`Notas de 5 : ${cont}`)
+    lista_notas.push(`Notas de 5 : ${cont}`)
     cont =0 //zerar o contador para nova contagem
 
     //Saque das notas de 2
@@ -106,22 +115,18 @@ app.post('/saque',function(req,res){
         valorsaque -=2
         cont ++
     }
-    lista.push(`Notas de 2 : ${cont}`)
-    cont =0 //zerar o contador para nova contagem
-
+    lista_notas.push(`Notas de 2 : ${cont}`)
+    cont = 0 //zerar o contador para nova contagem
   
     res.json({
-        valorsaque: valorsaque, //O que soborou do saque
-        //jsonlista: jsonlista,
-        lista:lista,
-        
+        //valorsaque exibi se todo valor foi retirado ou se sobrou algum valor
+        valorsaque: 'Valor do saque restante é de R$ ' +valorsaque+ ' ', 
+        lista_notas:lista_notas,
+       
+         
     })
     
 })
-
-
-
-
 
 app.listen(8081,()=>{
     console.log(`Servidor rodando na porta http://localhost:8081/`)
